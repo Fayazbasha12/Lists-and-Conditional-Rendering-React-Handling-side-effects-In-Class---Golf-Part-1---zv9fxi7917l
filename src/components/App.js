@@ -1,42 +1,94 @@
-import React, { Component, useState } from "react";
-import '../styles/App.css';
+import React, { Component, useEffect, useState } from "react";
+import "../styles/App.css";
 
-class App extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            renderBall: false,
-            posi : 0,
-            ballPosition: { left: "0px" }
-        };
-        this.renderChoice = this.renderBallOrButton.bind(this)
-        this.buttonClickHandler = this.buttonClickHandler.bind(this)
-    };
+const App = () => {
+  const [renderBall, setRenderBall] = useState(false);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [ballPosition, setBallPosition] = useState({
+    left: "0px",
+    top: "0px",
+  });
 
-    buttonClickHandler() {
-   
-   }
-    renderBallOrButton() {
-		if (this.state.renderBall) {
-		    return <div className="ball" style={this.state.ballPosition}></div>
-		} else {
-		    return <button onClick={this.buttonClickHandler} >Click For One Ball</button>
-		}
+  const setBall = () => {
+    setRenderBall(true);
+  };
+  useEffect(() => {
+    setBallPosition({ left: x, top: y });
+  }, [x, y]);
+  const handleEvent = (event) => {
+    switch (event.keyCode) {
+      case 37:
+        setX((x) => x - 5);
+        console.log(x, y);
+        console.log(ballPosition);
+        break;
+      case 38:
+        setY((y) => y - 5);
+        console.log(x, y);
+        console.log(ballPosition);
+        break;
+      case 39:
+        setX((x) => x + 5);
+        console.log(x, y);
+        console.log(ballPosition);
+        break;
+      case 40:
+        setY((y) => y + 5);
+        console.log(x, y);
+        console.log(ballPosition);
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEvent);
+  }, []);
+  const reset = () => {
+    setX((x) => 0);
+    setY((y) => 0);
+    setRenderBall(false);
+  };
+
+  const renderChoice = () => {
+    if (renderBall) {
+      return (
+        <div
+          className="ball"
+          style={{
+            left: ballPosition.left + "px",
+            top: ballPosition.top + "px",
+            position: "absolute",
+          }}
+        />
+      );
     }
 
-    // bind ArrowRight keydown event
-    componentDidMount() {
-      
-    }
+    return (
+      <button
+        className="start"
+        style={{
+          bottom: "50px",
+          left: "450px",
+          position: "absolute",
+        }}
+        onClick={setBall}
+      >
+        Start
+      </button>
+    );
+  };
 
-    render() {
-        return (
-            <div className="playground">
-                {this.renderBallOrButton()}
-            </div>
-        )
-    }
-}
-
+  return (
+    <div className="playground">
+      <button onClick={reset} className="reset">
+        Reset
+      </button>
+      {renderChoice()}
+    </div>
+  );
+};
 
 export default App;
